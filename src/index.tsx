@@ -1,74 +1,53 @@
-import React from "react";
+import { EventedProps, createLayerComponent } from "@react-leaflet/core";
+import { LatLngExpression, MarkerOptions } from "leaflet";
 import LeafletDriftMarker from "leaflet-drift-marker";
-import { Icon, DivIcon, LatLngExpression } from "leaflet";
-import {
-  LeafletProvider,
-  MapLayer,
-  MapLayerProps,
-  withLeaflet,
-} from "react-leaflet";
+import { ReactNode } from "react";
 
-type LeafletElement = LeafletDriftMarker;
-type Props = {
-  icon?: Icon | DivIcon;
-  draggable?: boolean;
-  opacity?: number;
+export interface ReactLeafletDriftMarkerProps
+  extends MarkerOptions,
+    EventedProps {
+  children?: ReactNode;
   position: LatLngExpression;
   duration: number;
   keepAtCenter?: boolean;
-  zIndexOffset?: number;
-} & MapLayerProps;
+}
 
-class ReactLeafletDriftMarker extends MapLayer<Props, LeafletElement> {
-  createLeafletElement(props: Props): LeafletElement {
-    const el = new LeafletDriftMarker(props.position, this.getOptions(props));
-    this.contextValue = { ...props.leaflet, popupContainer: el };
-    return el;
-  }
-
-  updateLeafletElement(fromProps: Props, toProps: Props) {
+export default createLayerComponent<
+  LeafletDriftMarker,
+  ReactLeafletDriftMarkerProps
+>(
+  function createMarker({ position, ...options }, ctx) {
+    const instance = new LeafletDriftMarker(position, options);
+    return { instance, context: { ...ctx, overlayContainer: instance } };
+  },
+  function updateMarker(marker, props, prevProps) {
     if (
-      toProps.position !== fromProps.position &&
-      typeof toProps.duration == "number"
+      prevProps.position !== props.position &&
+      typeof props.duration == "number"
     ) {
-      this.leafletElement.slideTo(toProps.position, {
-        duration: toProps.duration,
-        keepAtCenter: toProps.keepAtCenter,
+      marker.slideTo(props.position, {
+        duration: props.duration,
+        keepAtCenter: props.keepAtCenter,
       });
     }
-    if (toProps.icon !== fromProps.icon && toProps.icon) {
-      this.leafletElement.setIcon(toProps.icon);
+    if (props.icon != null && props.icon !== prevProps.icon) {
+      marker.setIcon(props.icon);
     }
     if (
-      toProps.zIndexOffset !== fromProps.zIndexOffset &&
-      toProps.zIndexOffset !== undefined
+      props.zIndexOffset != null &&
+      props.zIndexOffset !== prevProps.zIndexOffset
     ) {
-      this.leafletElement.setZIndexOffset(toProps.zIndexOffset);
+      marker.setZIndexOffset(props.zIndexOffset);
     }
-    if (
-      toProps.opacity !== fromProps.opacity &&
-      toProps.opacity !== undefined
-    ) {
-      this.leafletElement.setOpacity(toProps.opacity);
+    if (props.opacity != null && props.opacity !== prevProps.opacity) {
+      marker.setOpacity(props.opacity);
     }
-    if (
-      toProps.draggable !== fromProps.draggable &&
-      this.leafletElement.dragging !== undefined
-    ) {
-      if (toProps.draggable === true) {
-        this.leafletElement.dragging.enable();
+    if (marker.dragging != null && props.draggable !== prevProps.draggable) {
+      if (props.draggable === true) {
+        marker.dragging.enable();
       } else {
-        this.leafletElement.dragging.disable();
+        marker.dragging.disable();
       }
     }
   }
-
-  render() {
-    const { children } = this.props;
-
-    return children == null || this.contextValue == null ? null : (
-      <LeafletProvider value={this.contextValue}>{children}</LeafletProvider>
-    );
-  }
-}
-export default withLeaflet<Props>(ReactLeafletDriftMarker);
+);
