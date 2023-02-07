@@ -1,17 +1,19 @@
 # react-leaflet-drift-marker
 
 [![MIT License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=plastic)](http://opensource.org/licenses/MIT)
-[![npm version](https://img.shields.io/badge/npm-v3.0.0-green.svg?style=plastic)](https://www.npmjs.com/package/react-leaflet-drift-marker)
+[![npm version](https://img.shields.io/badge/npm-v4.0.0-green.svg?style=plastic)](https://www.npmjs.com/package/react-leaflet-drift-marker)
 
 | Support         | Tested |         |
 | --------------- | ------ | ------- |
 | `react-leaflet` | v2.x   | &#9745; |
 | `react-leaflet` | v3.x   | &#9745; |
+| `react-leaflet` | v4.x   | &#9745; |
 
 | react-leaflet | react-leaflet-drift-marker |
 | ------------- | -------------------------- |
 | v2.x          | v2.0                       |
 | v3.x          | v3.x                       |
+| v4.x          | v4.x                       |
 
 !["IMG"](./docs/ReactLeafletDriftMarker.gif "example")
 
